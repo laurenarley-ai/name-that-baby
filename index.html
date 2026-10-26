@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Name that baby!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f3efe6;
+        --paper: #fffdf8;
+        --ink: #2b2720;
+        --muted: #8a8478;
+        --line: #e4ddd0;
+        --lemon: #ffd967;
+        --answer-bg: #eef3e4;
+        --answer-ink: #3e4a32;
+        --shadow: 0 18px 40px rgba(70, 58, 32, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: Figtree, "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 12% 8%, rgba(255, 217, 103, 0.28), transparent 28%),
+          radial-gradient(circle at 90% 0%, rgba(196, 176, 140, 0.18), transparent 32%),
+          var(--bg);
+        color: var(--ink);
+        padding: 48px 20px 96px;
+      }
+
+      .page {
+        width: min(760px, 100%);
+        margin: 0 auto;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+
+      .hero-kicker {
+        display: inline-block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 14px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(3.1rem, 9vw, 5.6rem);
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        line-height: 0.92;
+        color: var(--lemon);
+        text-wrap: balance;
+      }
+
+      .flourish {
+        width: 84px;
+        height: 10px;
+        margin: 22px auto 0;
+        background: var(--lemon);
+        border-radius: 999px;
+      }
+
+      .card {
+        background: var(--paper);
+        border: 1px solid rgba(58, 51, 38, 0.08);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+        padding: 36px 32px 28px;
+        margin-bottom: 28px;
+      }
+
+      h2 {
+        margin: 0 0 28px;
+        font-size: clamp(1.55rem, 4vw, 2.05rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        text-align: center;
+        color: var(--lemon);
+        text-wrap: balance;
+      }
+
+      .prompt {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        gap: 12px 14px;
+        align-items: start;
+        margin-bottom: 18px;
+      }
+
+      .num {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--lemon);
+        color: #8a8478;
+        font-weight: 800;
+        font-size: 1.15rem;
+        margin-top: 2px;
+      }
+
+      .prompt-body {
+        min-width: 0;
+      }
+
+      textarea {
+        width: 100%;
+        appearance: none;
+        border: 1.5px solid var(--line);
+        background: #fff;
+        color: #000;
+        font-family: inherit;
+        font-size: 1.05rem;
+        font-weight: 500;
+        line-height: 1.4;
+        padding: 13px 16px;
+        border-radius: 14px;
+        outline: none;
+        resize: none;
+        min-height: 50px;
+        field-sizing: content;
+        overflow: hidden;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+
+      textarea::placeholder {
+        color: #c0bbb0;
+        font-weight: 500;
+      }
+
+      textarea:focus {
+        border-color: #d6c24a;
+        box-shadow: 0 0 0 4px rgba(255, 217, 103, 0.35);
+      }
+
+      .official {
+        display: none;
+        margin-top: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: var(--answer-bg);
+        color: var(--answer-ink);
+        font-size: 0.98rem;
+        line-height: 1.4;
+      }
+
+      .official strong {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #6d7a5e;
+        margin-bottom: 4px;
+      }
+
+      body.is-revealed .official {
+        display: block;
+        animation: rise 0.28s ease;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .reveal-wrap {
+        text-align: center;
+        padding-top: 20px;
+      }
+
+      .reveal {
+        appearance: none;
+        border: 0;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 1.12rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        background: var(--lemon);
+        padding: 16px 36px;
+        border-radius: 999px;
+        box-shadow: 0 10px 24px rgba(70, 58, 32, 0.12);
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+      }
+
+      .reveal:hover {
+        transform: translateY(-1px);
+      }
+
+      .reveal:active {
+        transform: translateY(1px);
+      }
+
+      .reveal.is-on {
+        background: #3a3326;
+        color: var(--lemon);
+      }
+
+      .hint {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 560px) {
+        body {
+          padding: 28px 14px 72px;
+        }
+
+        .card {
+          padding: 26px 18px 18px;
+          border-radius: 22px;
+        }
+
+        .prompt {
+          grid-template-columns: 40px 1fr;
+          gap: 10px 10px;
+        }
+
+        .num {
+          width: 40px;
+          height: 40px;
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div class="hero-kicker">Trivia time</div>
+        <h1>Name that baby!</h1>
+        <div class="flourish" aria-hidden="true"></div>
+      </header>
+
+      <section class="card" aria-labelledby="movies-heading">
+        <h2 id="movies-heading">Name the movie, baby!</h2>
+        <div class="prompt">
+          <div class="num">1</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Movie 1"></textarea>
+            <div class="official"><strong>Answer</strong>Bringing Up Baby</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">2</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Movie 2"></textarea>
+            <div class="official"><strong>Answer</strong>Rosemary’s Baby</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">3</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Movie 3"></textarea>
+            <div class="official"><strong>Answer</strong>Million Dollar Baby</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">4</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Movie 4"></textarea>
+            <div class="official"><strong>Answer</strong>Baby Mama</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">5</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Movie 5"></textarea>
+            <div class="official"><strong>Answer</strong>Baby Reindeer</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="songs-heading">
+        <h2 id="songs-heading">Name that baby, and their song (feat. “baby”)!</h2>
+        <div class="prompt">
+          <div class="num">1</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" placeholder="Singer, Song" aria-label="Singer and song 1"></textarea>
+            <div class="official"><strong>Answer</strong>Britney Spears, …Baby One More Time</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">2</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" placeholder="Singer, Song" aria-label="Singer and song 2"></textarea>
+            <div class="official"><strong>Answer</strong>Vanilla Ice, Ice Ice Baby</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">3</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" placeholder="Singer, Song" aria-label="Singer and song 3"></textarea>
+            <div class="official"><strong>Answer</strong>Justin Bieber, Baby</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">4</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" placeholder="Singer, Song" aria-label="Singer and song 4"></textarea>
+            <div class="official"><strong>Answer</strong>Sir Mix-A-Lot, Baby Got Back</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">5</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" placeholder="Singer, Song" aria-label="Singer and song 5"></textarea>
+            <div class="official"><strong>Answer</strong>Mariah Carey, Always Be My Baby</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="adults-heading">
+        <h2 id="adults-heading">Name the adult behind the baby!</h2>
+        <div class="prompt">
+          <div class="num">1</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Adult 1"></textarea>
+            <div class="official"><strong>Answer</strong>Jennifer Grey</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">2</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Adult 2"></textarea>
+            <div class="official"><strong>Answer</strong>Emma Bunton</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">3</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Adult 3"></textarea>
+            <div class="official"><strong>Answer</strong>Alec Baldwin</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">4</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Adult 4"></textarea>
+            <div class="official"><strong>Answer</strong>David Acord</div>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="num">5</div>
+          <div class="prompt-body">
+            <textarea rows="1" autocomplete="off" spellcheck="false" aria-label="Adult 5"></textarea>
+            <div class="official"><strong>Answer</strong>Elizabeth Ann Guttman</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="reveal-wrap">
+        <button class="reveal" type="button" id="reveal-btn">Reveal answers</button>
+        <p class="hint">No auto-scoring — compare what you wrote with the answers and tally it yourselves.</p>
+      </div>
+    </main>
+
+    <script>
+      const button = document.getElementById("reveal-btn");
+
+      button.addEventListener("click", () => {
+        const revealed = document.body.classList.toggle("is-revealed");
+        button.classList.toggle("is-on", revealed);
+        button.textContent = revealed ? "Hide answers" : "Reveal answers";
+      });
+
+      document.querySelectorAll("textarea").forEach((field) => {
+        const fit = () => {
+          field.style.height = "auto";
+          field.style.height = `${field.scrollHeight}px`;
+        };
+
+        field.addEventListener("input", fit);
+        field.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") event.preventDefault();
+        });
+      });
+    </script>
+  </body>
+</html>
